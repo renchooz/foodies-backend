@@ -18,7 +18,7 @@ await connectCloudinary()
 app.use(express.json())
 app.use(
   cors({
-    origin:["http://localhost:5173"], // Your frontend URL
+    origin:["http://localhost:5173",'https://jazzy-chebakia-c60bf7.netlify.app/'], // Your frontend URL
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true, // Enable cookies to be sent with requests
   })
