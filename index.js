@@ -15,14 +15,18 @@ let port = process.env.PORT || 4000
 await connectDb()
 await connectCloudinary()
 //middleware
-app.use(express.json())
+import cors from "cors";
+
 app.use(
   cors({
-    origin:["http://localhost:5173",'https://jazzy-chebakia-c60bf7.netlify.app/'], // Your frontend URL
+    origin: ["http://localhost:5173", "https://melodious-marigold-cac143.netlify.app"],
     methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true, // Enable cookies to be sent with requests
+    credentials: true,
   })
 );
+
+app.use(express.json())
+
 app.use(cookieParser())
 
 
