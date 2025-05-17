@@ -24,7 +24,7 @@ app.use(cors({
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
 }));
-app.options('*', cors()); // 🔥 Handles preflight (important!)
+
 
 app.use(express.json());
 app.use(cookieParser());
