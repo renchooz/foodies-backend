@@ -4,7 +4,8 @@ import jwt from "jsonwebtoken";
 import "dotenv/config";
 
 export const userData = async (req, res) => {
-  const { name, email, password } = req.body;
+  console.log("datta",req.body)
+  const { name, email, password, phone } = req.body;
   try {
     let existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -14,6 +15,7 @@ export const userData = async (req, res) => {
     const newUser = await User.create({
       name,
       email,
+      phone,
       password: hashedPassword,
     });
     let token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
@@ -25,10 +27,11 @@ export const userData = async (req, res) => {
       sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
+    
     return res.json({
       status:true,
       message: "User regestered succesfully",
-      user: { email: newUser.email, name: newUser.name },
+      user: { email: newUser.email, name: newUser.name, phone:newUser.phone},
     });
   } catch (error) {
     console.log(error.message);
@@ -37,6 +40,7 @@ export const userData = async (req, res) => {
 };
 
 export const login = async (req, res) => {
+    console.log("datta",req.body)
   let { email, password } = req.body;
   try {
     let user = await User.findOne({ email });
