@@ -105,9 +105,9 @@ try {
   const {phone} = req.body
   const verifyNumber = await User.findOne({phone})
   if(!verifyNumber){
-    return res.json({status:false,message:"Cannot find your number"})
+    return res.json({status:false,message:"Cannot find your number",user:verifyNumber})
   }
-   return res.json({status:true,message:"Otp Sent"})
+   return res.json({forgetstatus:true,message:"Otp Sent"})
 } catch (error) {
      return res.json({status:false,message:error.message})
 }
