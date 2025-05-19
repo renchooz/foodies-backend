@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import "dotenv/config";
 
 export const userData = async (req, res) => {
-  console.log("datta",req.body)
+  
   const { name, email, password, phone } = req.body;
   try {
     let existingUser = await User.findOne({ email });
@@ -40,7 +40,7 @@ export const userData = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-    console.log("datta",req.body)
+   
   let { email, password } = req.body;
   try {
     let user = await User.findOne({ email });
@@ -97,3 +97,17 @@ export const logout = async (req, res) => {
     res.json({ message: error.message });
   }
 };
+
+
+ export const forgetPassword = async (req,res)=>{
+try {
+  const {phone} = req.body
+  const verifyNumber = await User.find({phone})
+  if(!verifyNumber){
+    return res.json({status:false,message:"Cannot find your number"})
+  }
+   return res.json({status:true,message:"Otp Sent"})
+} catch (error) {
+     return res.json({status:false,message:error.message})
+}
+}
