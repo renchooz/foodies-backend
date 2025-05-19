@@ -101,8 +101,9 @@ export const logout = async (req, res) => {
 
  export const forgetPassword = async (req,res)=>{
 try {
+  console.log(req.body)
   const {phone} = req.body
-  const verifyNumber = await User.find({phone})
+  const verifyNumber = await User.findOne({phone})
   if(!verifyNumber){
     return res.json({status:false,message:"Cannot find your number"})
   }
