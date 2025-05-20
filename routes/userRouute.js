@@ -4,6 +4,7 @@ import {
   isAuth,
   login,
   logout,
+  resetPassword,
   userData,
   verifyOtp,
 } from "../controller/userController.js";
@@ -16,5 +17,7 @@ UserRouter.get("/is-auth", authUser, isAuth);
 UserRouter.post("/logout", authUser, logout);
 UserRouter.post("/forget",forgetPassword)
 UserRouter.post("/verify",verifyOtp)
+UserRouter.post("/reset",resetPassword)
+
 
 export default UserRouter;

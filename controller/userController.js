@@ -121,31 +121,46 @@ export const forgetPassword = async (req, res) => {
   }
 };
 
+export const verifyOtp = async (req, res) => {
+  try {
+    const { phone, otp } = req.body;
+    const user = await User.findOne({ phone });
+    if (!user || !user.otp || user.otp !== parseInt(otp)) {
+      return res.json({ status: false, message: "Invalid Otp" });
+    }
+    const currTime = new Date();
+    const otpTime = new Date(user.otpCreatedAt);
+    const timePassed = currTime - otpTime;
 
-export const verifyOtp =async (req,res)=>{
-try {
-  const{phone,otp} = req.body
-  const user = await User.findOne({phone})
-  if(!user || !user.otp || user.otp !== parseInt(otp)){
-     return res.json({ status: false, message: "Invalid Otp" });
-  }
-  const currTime = new Date()
-  const otpTime = new Date(user.otpCreatedAt)
-  const timePassed = currTime - otpTime
+    if (timePassed > 5 * 60 * 1000) {
+      user.otp = null;
+      user.otpCreatedAt = null;
+      await user.save();
+    }
+    if (user.otp === parseInt(otp)) {
+      user.otp = null;
+      user.otpCreatedAt = null;
+      await user.save();
+    }
 
-  if(timePassed>5*60*1000){
-    user.otp = null
-    user.otpCreatedAt = null
-    await user.save()
+    return res.json({ otpStatus: true, otpMessage: "Verified" });
+  } catch (error) {
+    return res.json({ status: false, message: error.message });
   }
-  if(user.otp === parseInt(otp)){
-   user.otp = null
-    user.otpCreatedAt = null
-    await user.save()
-  }
+};
 
-  return res.json({otpStatus: true, otpMessage:"Verified"})
-} catch (error) {
-   return res.json({ status: false, message: error.message });
-}
-}
+export const resetPassword = async (req, res) => {
+  try {
+    const { phone, newPassword } = req.body;
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    const user = await User.findOne({ phone });
+    if (user) {
+      user.password = hashedPassword;
+      await user.save();
+      return res.json({resetSuccess:true})
+    }
+    else return res.json({resetSuccess:true})
+  } catch (error) {
+    return res.json({status:false, message:"password not updated"})
+  }
+};
