@@ -25,6 +25,12 @@ const userSchema = new mongoose.Schema(
       type: Object,
       default: {},
     },
+    otp:{
+      type:Number
+    },
+    otpCreatedAt:{
+      type:Date
+    }
   },
   {
     minimize: false, // Keeps empty objects in DB
