@@ -2,6 +2,8 @@ import User from "../models/userModel.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
+import twilio from "twilio";
+const twilioClient = twilio(process.env.TWILIO_SID, process.env.TWILIO_AUTH_TOKEN);
 
 export const userData = async (req, res) => {
   const { name, email, password, phone } = req.body;
@@ -103,21 +105,31 @@ export const forgetPassword = async (req, res) => {
   try {
     const { phone } = req.body;
     const user = await User.findOne({ phone });
+
     if (!user) {
       return res.json({ status: false, message: "Cannot find your number" });
     }
+
     const sendOtp = Math.floor(1000 + Math.random() * 9000);
     user.otp = sendOtp;
     user.otpCreatedAt = new Date();
     await user.save();
 
+    // ✅ Send OTP via Twilio
+    await twilioClient.messages.create({
+      body: `Your OTP for password reset is ${sendOtp}`,
+      from: process.env.TWILIO_PHONE,
+      to: `+91${phone}`, // Add country code prefix if needed
+    });
+
     return res.json({
       forgetstatus: true,
-      forgetmessage: "Otp Sent",
-      otp: sendOtp,
+      forgetmessage: "OTP Sent to your mobile number",
     });
+
   } catch (error) {
-    return res.json({ status: false, message: error.message });
+    console.error("Twilio SMS error:", error);
+    return res.json({ status: false, message: "OTP sending failed" });
   }
 };
 
